@@ -76,3 +76,48 @@ extern const NSInteger MTLTestModelNameMissing;
 // Maps a non-existant property "name" to the "username" key in JSON.
 @interface MTLIllegalJSONMappingModel : MTLModel <MTLJSONSerializing>
 @end
+
+@interface MTLStorageBehaviorModel : MTLModel
+
+@property (readonly, nonatomic, assign) BOOL primitive;
+
+@property (readonly, nonatomic, assign) id assignProperty;
+@property (readonly, nonatomic, weak) id weakProperty;
+@property (readonly, nonatomic, strong) id strongProperty;
+
+@property (readonly, nonatomic, strong) id shadowedInSubclass;
+@property (readonly, nonatomic, strong) id declaredInProtocol;
+
+@end
+
+@protocol MTLDateProtocol <NSObject>
+
+@property (readonly, nonatomic, strong) id declaredInProtocol;
+
+@end
+
+@interface MTLStorageBehaviorModelSubclass : MTLStorageBehaviorModel <MTLDateProtocol>
+
+@property (readonly, nonatomic, strong) id shadowedInSubclass;
+
+@end
+
+@interface MTLNonPropertyModel : MTLModel <MTLJSONSerializing>
+
+- (NSURL *)homepage;
+
+@end
+
+@protocol MTLOptionalPropertyProtocol
+
+@optional
+@property (readwrite, nonatomic, strong) id optionalUnimplementedProperty;
+@property (readwrite, nonatomic, strong) id optionalImplementedProperty;
+
+@end
+
+@interface MTLOptionalPropertyModel : MTLModel <MTLOptionalPropertyProtocol>
+
+@property (readwrite, nonatomic, strong) id optionalImplementedProperty;
+
+@end

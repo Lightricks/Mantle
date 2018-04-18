@@ -8,6 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
+/// Defines a property's storage behavior, which affects how it will be copied,
+/// compared, and persisted.
+///
+/// MTLPropertyStorageNone       - This property is not included in -description,
+///                                -hash, or anything else.
+/// MTLPropertyStorageTransitory - This property is included in one-off
+///                                operations like -copy and -dictionaryValue but
+///                                does not affect -isEqual: or -hash.
+///                                It may disappear at any time.
+/// MTLPropertyStoragePermanent  - The property is included in serialization
+///                                (like `NSCoding`) and equality, since it can
+///                                be expected to stick around.
+typedef enum : NSUInteger {
+	MTLPropertyStorageNone,
+	MTLPropertyStorageTransitory,
+	MTLPropertyStoragePermanent,
+} MTLPropertyStorage;
+
 // An abstract base class for model objects, using reflection to provide
 // sensible default behaviors.
 //
@@ -46,6 +64,18 @@
 // properties without ivars, or properties on MTLModel itself.
 + (NSSet *)propertyKeys;
 
+/// The storage behavior of a given key.
+///
+/// The default implementation returns MTLPropertyStorageNone for properties that
+/// are readonly and not backed by an instance variable and
+/// MTLPropertyStoragePermanent otherwise.
+///
+/// Subclasses can use this method to prevent MTLModel from resolving circular
+/// references by returning MTLPropertyStorageTransitory.
+///
+/// Returns the storage behavior for a given key on the receiver.
++ (MTLPropertyStorage)storageBehaviorForPropertyWithKey:(NSString *)propertyKey;
+
 // A dictionary representing the properties of the receiver.
 //
 // The default implementation combines the values corresponding to all
@@ -68,24 +98,20 @@
 // `model` must be an instance of the receiver's class or a subclass thereof.
 - (void)mergeValuesForKeysFromModel:(MTLModel *)model;
 
-// Compares the receiver with another object for equality.
-//
-// The default implementation is equivalent to comparing both models'
-// -dictionaryValue.
-//
-// Note that this may lead to infinite loops if the receiver holds a circular
-// reference to another MTLModel and both use the default behavior.
-// It is recommended to override -isEqual: in this scenario.
+/// Compares the receiver with another object for equality.
+///
+/// The default implementation is equivalent to comparing all properties of both
+/// models for which +storageBehaviorForPropertyWithKey: returns
+/// MTLPropertyStoragePermanent.
+///
+/// Returns YES if the two models are considered equal, NO otherwise.
 - (BOOL)isEqual:(id)object;
 
-// A string that describes the contents of the receiver.
-//
-// The default implementation is based on the receiver's class and its
-// -dictionaryValue.
-//
-// Note that this may lead to infinite loops if the receiver holds a circular
-// reference to another MTLModel and both use the default behavior.
-// It is recommended to override -description in this scenario.
+/// A string that describes the contents of the receiver.
+///
+/// The default implementation is based on the receiver's class and all its
+/// properties for which +storageBehaviorForPropertyWithKey: returns
+/// MTLPropertyStoragePermanent.
 - (NSString *)description;
 
 @end
