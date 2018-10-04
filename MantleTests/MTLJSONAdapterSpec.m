@@ -177,18 +177,6 @@ it(@"should ignore unrecognized JSON keys", ^{
 	expect(model.nestedName).to(equal(@"bar"));
 });
 
-it(@"should fail to initialize if JSON dictionary validation fails", ^{
-	NSDictionary *values = @{
-		@"username": @"this is too long a name",
-	};
-
-	NSError *error = nil;
-	MTLTestModel *model = [MTLJSONAdapter modelOfClass:MTLTestModel.class fromJSONDictionary:values error:&error];
-	expect(model).to(beNil());
-	expect(error.domain).to(equal(MTLTestModelErrorDomain));
-	expect(@(error.code)).to(equal(@(MTLTestModelNameTooLong)));
-});
-
 it(@"should parse a different model class", ^{
 	NSDictionary *values = @{
 		@"username": @"foo",
