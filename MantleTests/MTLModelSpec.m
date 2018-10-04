@@ -105,16 +105,6 @@ describe(@"with a dictionary of values", ^{
 	});
 });
 
-it(@"should fail to initialize if dictionary validation fails", ^{
-	NSError *error = nil;
-	MTLTestModel *model = [[MTLTestModel alloc] initWithDictionary:@{ @"name": @"this is too long a name" } error:&error];
-	expect(model).to(beNil());
-
-	expect(error).notTo(beNil());
-	expect(error.domain).to(equal(MTLTestModelErrorDomain));
-	expect(@(error.code)).to(equal(@(MTLTestModelNameTooLong)));
-});
-
 it(@"should merge two models together", ^{
 	MTLTestModel *target = [[MTLTestModel alloc] initWithDictionary:@{ @"name": @"foo", @"count": @(5) } error:NULL];
 	expect(target).notTo(beNil());
