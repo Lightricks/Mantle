@@ -15,6 +15,11 @@ const NSInteger MTLTestModelNameMissing = 2;
 static NSUInteger modelVersion = 1;
 
 @implementation MTLEmptyTestModel
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end
 
 @implementation MTLTestModel
@@ -76,6 +81,10 @@ static NSUInteger modelVersion = 1;
 
 #pragma mark NSCoding
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder {
 	[super encodeWithCoder:coder];
 
@@ -96,6 +105,10 @@ static NSUInteger modelVersion = 1;
 
 	if ([key isEqual:@"name"] && fromVersion == 0) {
 		return [@"M: " stringByAppendingString:[coder decodeObjectForKey:@"mtl_name"]];
+	}
+
+	if ([key isEqual:@"nestedName"] && fromVersion != 0) {
+		return nil;
 	}
 
 	return [super decodeValueForKey:key withCoder:coder modelVersion:fromVersion];

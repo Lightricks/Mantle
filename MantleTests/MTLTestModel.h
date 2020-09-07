@@ -12,10 +12,10 @@ extern NSString * const MTLTestModelErrorDomain;
 extern const NSInteger MTLTestModelNameTooLong;
 extern const NSInteger MTLTestModelNameMissing;
 
-@interface MTLEmptyTestModel : MTLModel
+@interface MTLEmptyTestModel : MTLModel <NSSecureCoding>
 @end
 
-@interface MTLTestModel : MTLModel <MTLJSONSerializing>
+@interface MTLTestModel : MTLModel <MTLJSONSerializing, NSSecureCoding>
 
 // Defaults to 1. This changes the behavior of some of the receiver's methods to
 // emulate a migration.
