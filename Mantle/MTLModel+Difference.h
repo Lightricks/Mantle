@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @note per convention the receiver is to be treated as the "expected",
 /// while the argument object is the "actual".
-- (NSArray<NSString *> *)differenceFrom:(id)object;
+- (NSArray<NSString *> *)differenceFrom:(nullable id)object;
 
 @end
 

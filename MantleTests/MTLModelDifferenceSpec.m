@@ -10,10 +10,22 @@
 
 QuickSpecBegin(MTLModelDifferenceSpec)
 
-it(@"should raise on mismatching argument type", ^{
+it(@"should return message about expected type", ^{
   MTLTestModel *model = [[MTLTestModel alloc] init];
   NSAssert(model, @"model must be non nil");
-  expect([model differenceFrom:@1]).to(raiseException());
+  NSArray *difference = [model differenceFrom:nil];
+  expect(difference).to(equal(@[
+    @"Expected: object of type MTLTestModel, got: nil"
+  ]));
+});
+
+it(@"should return mismatching argument type message for argument of different type", ^{
+  MTLTestModel *model = [[MTLTestModel alloc] init];
+  NSAssert(model, @"model must be non nil");
+  NSArray *difference = [model differenceFrom:@1];
+  expect(difference).to(equal(@[
+    @"Expected: object of type MTLTestModel, got: __NSCFNumber"
+  ]));
 });
 
 it(@"should compute different fields", ^{
