@@ -7,11 +7,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation MTLModel (Difference)
 
-- (NSArray<NSString *> *)differenceFrom:(id)object {
+- (NSArray<NSString *> *)differenceFrom:(nullable id)object {
   MTLModel *actual = (MTLModel *)object;
 
-  NSAssert2([object isKindOfClass:self.class], @"Expected object of type %@, got : %@",
-            self.class, [object class]);
+  if (!actual) {
+    return @[
+      [NSString stringWithFormat:@"Expected: object of type %@, got: nil", NSStringFromClass([self class])]
+    ];
+  }
+
+  if (![[actual class] isEqual:[self class]]) {
+    return @[
+      [NSString stringWithFormat:@"Expected: object of type %@, got: %@",
+       NSStringFromClass([self class]), NSStringFromClass([object class])]
+    ];
+  }
 
   NSMutableArray<NSString *> *differences = [NSMutableArray array];
   for (NSString *key in self.class.propertyKeys) {
@@ -34,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
   }
 
-  return differences.copy;
+  return differences;
 }
 
 @end
